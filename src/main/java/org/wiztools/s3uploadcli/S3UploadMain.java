@@ -83,7 +83,7 @@ public class S3UploadMain {
     
     private static void printCommandLineHelp(Options options){
         HelpFormatter hf = new HelpFormatter();
-        String cmdLine = "java -jar s3upload-cli-NN-jar-with-dependencies.jar [options] file1 file2 ...";
+        String cmdLine = "java -jar s3upload-cli-NN-jar-with-dependencies.jar [opts] file(s)";
         String descriptor = "AWS S3 upload tool";
         String moreHelp = "Format of `aws-creds-file': \n"
                 + "\tAWSAccessKeyId=XXX\n"
