@@ -3,13 +3,13 @@
     <groupId>org.wiztools</groupId>
     <artifactId>s3upload-cli</artifactId>
     <packaging>jar</packaging>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
     <name>s3upload-cli</name>
     <url>http://wiztools.googlecode.com/</url>
     <scm>
-        <connection>scm:svn:http://wiztools.googlecode.com/svn/s3upload-cli/trunk/</connection>
-        <developerConnection>scm:svn:https://wiztools.googlecode.com/svn/s3upload-cli/trunk/</developerConnection>
-        <url>http://code.google.com/p/wiztools/source/browse/</url>
+        <connection>scm:svn:http://wiztools.googlecode.com/svn/s3upload-cli/tags/s3upload-cli-1.2</connection>
+        <developerConnection>scm:svn:https://wiztools.googlecode.com/svn/s3upload-cli/tags/s3upload-cli-1.2</developerConnection>
+        <url>scm:svn:https://wiztools.googlecode.com/svn/s3upload-cli/tags/s3upload-cli-1.2</url>
     </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
