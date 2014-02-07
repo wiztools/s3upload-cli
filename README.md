@@ -1,26 +1,22 @@
-* S3 Upload Cli
+# WizTools.org S3 Upload Cli
 
-  This is a commandline tool to upload files to Amazon's S3 service.
+This is a commandline tool to upload files to Amazon's S3 service.
 
-* Source Code
+## Building
 
-  http://wiztools.googlecode.com/
+Maven 2.x or above is needed for building S3Upload-cli. To build:
 
-* Building
+    $ mvn package
 
-  Maven 2.x or above is needed for building S3Upload-cli. To build:
+## Running
 
-  $ mvn package
+To execute:
 
-* Running
+    $ java -jar s3upload-cli-NN-jar-with-dependencies.jar
 
-  To execute:
+Where `NN' is the version number.
 
-  $ java -jar s3upload-cli-NN-jar-with-dependencies.jar
+## License
 
-  Where `NN' is the version number.
-
-* License
-
-  http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
