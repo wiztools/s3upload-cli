@@ -3,14 +3,14 @@
     <groupId>org.wiztools</groupId>
     <artifactId>s3upload-cli</artifactId>
     <packaging>jar</packaging>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
     <name>s3upload-cli</name>
     <url>https://github.com/wiztools/s3upload-cli</url>
     <scm>
         <connection>scm:git:https://github.com/wiztools/s3upload-cli.git</connection>
         <developerConnection>scm:git:https://github.com/wiztools/s3upload-cli.git</developerConnection>
         <url>https://github.com/wiztools/s3upload-cli</url>
-    </scm>
+  </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
