@@ -4,16 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import joptsimple.OptionException;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.ServiceException;
@@ -33,95 +29,46 @@ public class S3UploadMain {
     private static final int EXIT_S3_ERROR = 3;
     private static final int EXIT_SYS_ERROR = 4;
     
-    private static Options generateOptions(){
-        Options options = new Options();
-        
-        // AWS credentials
-        Option option = OptionBuilder
-                .withLongOpt("aws-creds-file")
-                .hasArg()
-                .withDescription("Java properties file with AWS credentials")
-                .create('k');
-        options.addOption(option);
-        
-        // access key
-        option = OptionBuilder
-                .withLongOpt("accesskey")
-                .hasArg()
-                .withDescription("AWS access key (not needed when -k option is used)")
-                .create('a');
-        options.addOption(option);
-        
-        // secret key
-        option = OptionBuilder
-                .withLongOpt("secretkey")
-                .hasArg()
-                .withDescription("AWS secret key (not needed when -k option is used)")
-                .create('s');
-        options.addOption(option);
-        
-        // bucket
-        option = OptionBuilder
-                .withLongOpt("bucket")
-                .hasArg()
-                .isRequired()
-                .withDescription("Destination S3 bucket name")
-                .create('b');
-        options.addOption(option);
-        
-        // help
-        option = OptionBuilder
-                .withLongOpt("help")
-                .hasArg(false)
-                .isRequired(false)
-                .withDescription("Print this help")
-                .create('h');
-        options.addOption(option);
-        
-        return options;
-    }
-    
-    private static void printCommandLineHelp(Options options){
-        HelpFormatter hf = new HelpFormatter();
+    private static void printCommandLineHelp(PrintStream out){
         String cmdLine = "java -jar s3upload-cli-NN-jar-with-dependencies.jar [opts] file(s)";
-        String descriptor = "AWS S3 upload tool";
+        String descriptor = "Where [opts] are:";
+        
+        String opts =
+                "  -a  AWS access key (not needed when -k option is used).\n" +
+                "  -s  AWS secret key (not needed when -k option is used).\n" +
+                "  -k  Java properties file with AWS credentials.\n" +
+                "  -b  Destination S3 bucket name.\n" +
+                "  -h  Prints this help.\n";
+        
         String moreHelp = "Format of `aws-creds-file': \n"
                 + "\tAWSAccessKeyId=XXX\n"
                 + "\tAWSSecretKey=XXX";
-        hf.printHelp(cmdLine, descriptor, options, moreHelp);
+        
+        out.printf("Usage: %s\n%s\n%s\n%s\n", cmdLine, descriptor, opts, moreHelp);
     }
     
     public static void main(String[] arg) {
-        Options options = generateOptions();
+        
         try{
-            CommandLineParser parser = new GnuParser();
-            CommandLine cmd = parser.parse(options, arg);
             
-            if(cmd.hasOption('h')){
-                printCommandLineHelp(options);
-                return;
-            }
+            OptionParser parser = new OptionParser( "a:s:k:b:h" );
+            OptionSet options = parser.parse(arg);
             
-            if(cmd.getArgs().length == 0) {
-                System.err.println("No files specified for transfer.");
-                printCommandLineHelp(options);
-                System.exit(EXIT_CLI_ERROR);
-            }
 
-            String awsCredsFile = options.getOption("aws-creds-file").getValue();
-            String accessKey = options.getOption("accesskey").getValue();
-            String secretKey = options.getOption("secretkey").getValue();
-            String bucketName = options.getOption("bucket").getValue();
+            String awsCredsFile = (String) options.valueOf("k");
+            String accessKey = (String) options.valueOf("a");
+            String secretKey = (String) options.valueOf("s");
+            String bucketName = (String) options.valueOf("b");
             
             if(awsCredsFile == null && (accessKey == null || secretKey == null)) {
                 System.err.println("Either -k or (-a and -s) options are mandatory.");
-                printCommandLineHelp(options);
+                printCommandLineHelp(System.err);
                 System.exit(EXIT_CLI_ERROR);
             }
             
             if(awsCredsFile != null && (accessKey != null && secretKey != null)) {
                 System.err.println("Options -k and (-a and -s) cannot coexist.");
-                printCommandLineHelp(options);
+                printCommandLineHelp(System.err);
                 System.exit(EXIT_CLI_ERROR);
             }
             
@@ -145,8 +92,9 @@ public class S3UploadMain {
                 S3Service service = new RestS3Service(cred);
                 S3Bucket bucket = new S3Bucket(bucketName);
                 
-                for(String fileName: cmd.getArgs()) {
-                    File file = new File(fileName);
+                for(Object o: options.nonOptionArguments()) {
+                    final String fileName = (String) o;
+                    final File file = new File(fileName);
                     if(file.isFile() && file.canRead()) {
                         S3Object object = new S3Object(bucket, file);
                         service.putObject(bucket, object);
@@ -180,9 +128,9 @@ public class S3UploadMain {
                 System.exit(EXIT_IO_ERROR);
             }
         }
-        catch(ParseException ex){
+        catch(OptionException ex){
             System.err.println(ex.getMessage());
-            printCommandLineHelp(options);
+            printCommandLineHelp(System.err);
             System.exit(EXIT_CLI_ERROR);
         }
     }
