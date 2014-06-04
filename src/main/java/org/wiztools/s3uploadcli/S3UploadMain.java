@@ -54,6 +54,10 @@ public class S3UploadMain {
             OptionParser parser = new OptionParser( "a:s:k:b:h" );
             OptionSet options = parser.parse(arg);
             
+            if(options.has("h")) {
+                printCommandLineHelp(System.out);
+                System.exit(0);
+            }
 
             String awsCredsFile = (String) options.valueOf("k");
             String accessKey = (String) options.valueOf("a");
